@@ -28,7 +28,7 @@ public class ClientManual {
 
 				Operacao x = leitura(scan);
 
-				if (!x.getError().equals(null)) {
+				if (x.getError().equals("")) {
 					out.writeObject(x);
 
 					System.out.println(in.readObject().toString());
@@ -39,7 +39,7 @@ public class ClientManual {
 					System.out.println(x.getError());
 				}
 
-				disconectar();
+				desconectar();
 			}
 
 		} catch (IOException e) {
@@ -54,34 +54,54 @@ public class ClientManual {
 		}
 	}
 
+	/*
+	 * Faz a leitura de atributos e cria um objeto Operação
+	 */
 	public static Operacao leitura(Scanner scan) {
 
 		double valor1 = 0, valor2 = 0;
-		String error = null;
+		String error = "";
 
 		System.out.println("\nInforme o operador: ");
 		String operador = scan.next();
 
-		try {
+		// Valida se a operação selecionada é existente no sistema
+		if (validarOperacao(operador)) {
+			try {
 
-			System.out.println("Informe o primeiro valor: ");
-			valor1 = Double.parseDouble(scan.next());
+				// Testa se a operação é uma potenciação para ler somente 1 numero
+				if (operador.equals("pot") || operador.equals("#")) {
+					System.out.println("Informe o valor: ");
+					valor1 = Double.parseDouble(scan.next());
 
-			System.out.println("Informe o operador: ");
-			valor2 = Double.parseDouble(scan.next());
+				} else {
+					System.out.println("Informe o primeiro valor: ");
+					valor1 = Double.parseDouble(scan.next());
 
-		} catch (NumberFormatException e) {
-			System.out.println("Valor Invalido, Tente Novamente!");
+					System.out.println("Informe o segundo valor: ");
+					valor2 = Double.parseDouble(scan.next());
+					
+				}
 
-		} catch (Exception e) {
-			System.err.println(e);
+			} catch (NumberFormatException e) {
+				error += "\nValor Invalido, Tente Novamente!";
+
+			} catch (Exception e) {
+				System.err.println(e);
+
+			}
+		} else {
+			error += "\nOperação Invalida, Tente Novamente!";
 
 		}
 
 		return new Operacao(operador, valor1, valor2, error);
 	}
 
-	public static boolean validator(String op) {
+	/*
+	 * Valida se uma operação é valida
+	 */
+	public static boolean validarOperacao(String op) {
 		boolean x;
 
 		switch (op) {
@@ -93,6 +113,12 @@ public class ClientManual {
 		case "mul":
 		case "/":
 		case "div":
+		case "#":
+		case "pot":
+		case "%":
+		case "por":
+		case "$":
+		case "sqr":
 			x = true;
 			break;
 		default:
@@ -103,6 +129,9 @@ public class ClientManual {
 		return x;
 	}
 
+	/*
+	 * Conecta o socket na porta do servidor master e cria o input/output
+	 */
 	public static void conectar(int porta) throws UnknownHostException, IOException {
 
 		System.out.println("\nIniciando conexão com o servidor. PORTA: " + porta);
@@ -113,7 +142,10 @@ public class ClientManual {
 		out = new ObjectOutputStream(s.getOutputStream());
 	}
 
-	private static void disconectar() throws IOException {
+	/*
+	 * Desconecta socket, input e output
+	 */
+	private static void desconectar() throws IOException {
 		if (in != null)
 			in.close();
 

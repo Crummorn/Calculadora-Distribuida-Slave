@@ -65,7 +65,6 @@ public class Operacao implements Serializable {
 		this.resultado = resultado;
 	}
 	
-	
 	public String getError() {
 		return error;
 	}
