@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import Model.SlaveOpBas;
+import Modelo.Operacao;
 
 public class Server extends Thread {
 	private static ServerSocket ss;
@@ -28,7 +28,7 @@ public class Server extends Thread {
 			do {
 				x = in.readObject();
 
-				if (x instanceof SlaveOpBas) {
+				if (x instanceof Operacao) {
 					slave = new Socket("localhost", 10010);
 
 					ObjectOutputStream outSlave = new ObjectOutputStream(slave.getOutputStream());

@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import Model.SlaveOpBas;
+import Modelo.Operacao;
 
 public class ClientAuto {
 
@@ -21,7 +21,7 @@ public class ClientAuto {
 
 				conectar(10000);
 
-				out.writeObject(new SlaveOpBas("Soma", 10, 5, true));
+				out.writeObject(new Operacao("Soma", 10, 5, true));
 
 				System.out.println(in.readObject().toString());
 

@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import Model.SlaveOpBas;
+import Modelo.Operacao;
 
 public class ServerSlaveOpBas extends Thread {
 	private static ServerSocket ss;
@@ -26,8 +26,8 @@ public class ServerSlaveOpBas extends Thread {
 
 			x = in.readObject();
 
-			if (x instanceof SlaveOpBas) {
-				x = funcoes((SlaveOpBas) x);
+			if (x instanceof Operacao) {
+				x = funcoes((Operacao) x);
 
 				out.writeObject(x);
 
@@ -43,7 +43,7 @@ public class ServerSlaveOpBas extends Thread {
 		}
 	}
 
-	public SlaveOpBas funcoes(SlaveOpBas x) {
+	public Operacao funcoes(Operacao x) {
 		switch (x.getOperacao().toLowerCase()) {
 		case "+":
 		case "som":

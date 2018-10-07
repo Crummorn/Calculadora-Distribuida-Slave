@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import Model.SlaveOpBas;
+import Modelo.Operacao;
 
 public class ClientManual {
 
@@ -26,7 +26,7 @@ public class ClientManual {
 			for (int i = 0; i < 8; i++) {
 				conectar(10000);
 
-				SlaveOpBas x = leitura(scan);
+				Operacao x = leitura(scan);
 
 				if (x.isValidator()) {
 					out.writeObject(x);
@@ -54,7 +54,7 @@ public class ClientManual {
 		}
 	}
 
-	public static SlaveOpBas leitura(Scanner scan) {
+	public static Operacao leitura(Scanner scan) {
 
 		double valor1 = 0, valor2 = 0;
 
@@ -77,7 +77,7 @@ public class ClientManual {
 
 		}
 
-		return new SlaveOpBas(operador, valor1, valor2, validator(operador));
+		return new Operacao(operador, valor1, valor2, validator(operador));
 	}
 
 	public static boolean validator(String op) {

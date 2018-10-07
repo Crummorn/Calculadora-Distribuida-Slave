@@ -1,8 +1,8 @@
-package Model;
+package Modelo;
 
 import java.io.Serializable;
 
-public class SlaveOpBas implements Serializable {
+public class Operacao implements Serializable {
 
 	private static final long serialVersionUID = 940075609663291305L;
 	private String operacao;
@@ -11,11 +11,11 @@ public class SlaveOpBas implements Serializable {
 	private double resultado;
 	private boolean validator;
 
-	public SlaveOpBas() {
+	public Operacao() {
 		super();
 	}
 
-	public SlaveOpBas(String operacao, double valor1, double valor2, boolean validator) {
+	public Operacao(String operacao, double valor1, double valor2, boolean validator) {
 		super();
 		this.operacao = operacao;
 		this.valor1 = valor1;
