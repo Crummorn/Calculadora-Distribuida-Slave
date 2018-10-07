@@ -15,22 +15,22 @@ public class Operacao implements Serializable {
 		super();
 	}
 
-	public Operacao(String operacao, double valor1, double valor2) {
+	public Operacao(String operacao, double valor1, double valor2, String error) {
 		super();
 		this.operacao = operacao;
 		this.valor1 = valor1;
 		this.valor2 = valor2;
 		this.resultado = 0;
-		this.error = null;
+		this.error = error;
 	}
 
-	public Operacao(String operacao, double valor1) {
+	public Operacao(String operacao, double valor1, String error) {
 		super();
 		this.operacao = operacao;
 		this.valor1 = valor1;
 		this.valor2 = 0;
 		this.resultado = 0;
-		this.error = null;
+		this.error = error;
 	}
 
 	public String getOperacao() {

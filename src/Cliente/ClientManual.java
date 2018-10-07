@@ -57,6 +57,7 @@ public class ClientManual {
 	public static Operacao leitura(Scanner scan) {
 
 		double valor1 = 0, valor2 = 0;
+		String error = null;
 
 		System.out.println("\nInforme o operador: ");
 		String operador = scan.next();
@@ -77,7 +78,7 @@ public class ClientManual {
 
 		}
 
-		return new Operacao(operador, valor1, valor2);
+		return new Operacao(operador, valor1, valor2, error);
 	}
 
 	public static boolean validator(String op) {
