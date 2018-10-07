@@ -8,13 +8,13 @@ import java.net.Socket;
 
 import Modelo.Operacao;
 
-public class Server extends Thread {
+public class ServerMaster extends Thread {
 	private static ServerSocket ss;
 	private Socket s;
 	private Socket slave;
 	private final static int PORT = 10000;
 
-	public Server(Socket s) {
+	public ServerMaster(Socket s) {
 		this.s = s;
 	}
 
@@ -29,7 +29,8 @@ public class Server extends Thread {
 				x = in.readObject();
 
 				if (x instanceof Operacao) {
-					slave = new Socket("localhost", 10010);
+					
+					slave = new Socket("localhost", acharServidor((Operacao) x));
 
 					ObjectOutputStream outSlave = new ObjectOutputStream(slave.getOutputStream());
 					ObjectInputStream inSlave = new ObjectInputStream(slave.getInputStream());
@@ -42,6 +43,7 @@ public class Server extends Thread {
 					outSlave.close();
 					inSlave.close();
 				}
+				
 			} while (!(x instanceof String) && x != "fim");
 
 			if (x instanceof String && x == "fim") {
@@ -61,6 +63,39 @@ public class Server extends Thread {
 		}
 	}
 
+	/*
+	 * Baseado na operação, seleciona a porta do servidor
+	 */
+	public int acharServidor (Operacao x) {
+		int porta;
+		
+		switch (x.getOperacao()) {
+		case "+":
+		case "som":
+		case "-":
+		case "sub":
+		case "*":
+		case "mul":
+		case "/":
+		case "div":
+			porta = 10010;
+			break;
+		case "#":
+		case "pot":
+		case "%":
+		case "por":
+		case "$":
+		case "sqr":
+			porta = 10020;
+			break;
+		default:
+			porta = -1;
+			break;
+		}
+				
+		return porta;
+	}
+
 	public static void main(String[] args) {
 		try {
 			ss = new ServerSocket(PORT);
@@ -74,14 +109,14 @@ public class Server extends Thread {
 			try {
 				Socket conexao = ss.accept();
 
-				System.out.println("======================================");
+				System.out.println("\n======================================");
 				System.out.println("\nCliente Aceito");
 				System.out.println("HOSTNAME = " + conexao.getInetAddress().getHostName());
 				System.out.println("HOST ADDRESS = " + conexao.getInetAddress().getHostAddress());
 				System.out.println("PORTA LOCAL = " + conexao.getLocalPort());
 				System.out.println("PORTA DE CONEXAO = " + conexao.getPort());
 
-				new Server(conexao).start();
+				new ServerMaster(conexao).start();
 
 			} catch (IOException e) {
 				e.printStackTrace();
