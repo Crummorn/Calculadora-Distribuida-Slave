@@ -9,21 +9,29 @@ public class Operacao implements Serializable {
 	private double valor1;
 	private double valor2;
 	private double resultado;
-	private boolean validator;
+	private String error;
 
 	public Operacao() {
 		super();
 	}
 
-	public Operacao(String operacao, double valor1, double valor2, boolean validator) {
+	public Operacao(String operacao, double valor1, double valor2) {
 		super();
 		this.operacao = operacao;
 		this.valor1 = valor1;
 		this.valor2 = valor2;
-		this.validator = validator;
 		this.resultado = 0;
+		this.error = null;
 	}
 
+	public Operacao(String operacao, double valor1) {
+		super();
+		this.operacao = operacao;
+		this.valor1 = valor1;
+		this.valor2 = 0;
+		this.resultado = 0;
+		this.error = null;
+	}
 
 	public String getOperacao() {
 		return operacao;
@@ -57,14 +65,15 @@ public class Operacao implements Serializable {
 		this.resultado = resultado;
 	}
 	
-	public boolean isValidator() {
-		return validator;
+	
+	public String getError() {
+		return error;
 	}
 
-	public void setValidator(boolean validator) {
-		this.validator = validator;
+	public void setError(String error) {
+		this.error = error;
 	}
-	
+
 	public String toString() {
 		return "\nOperacao: " + this.operacao + "\nValor 1: " + this.valor1 + "\nValor 2: " + this.valor2
 				+ "\nResultado: " + this.resultado;

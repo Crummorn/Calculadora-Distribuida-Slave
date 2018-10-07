@@ -21,7 +21,7 @@ public class ClientAuto {
 
 				conectar(10000);
 
-				out.writeObject(new Operacao("Soma", 10, 5, true));
+				out.writeObject(new Operacao("Soma", 10, 5));
 
 				System.out.println(in.readObject().toString());
 

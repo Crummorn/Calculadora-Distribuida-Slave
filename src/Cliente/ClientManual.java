@@ -28,7 +28,7 @@ public class ClientManual {
 
 				Operacao x = leitura(scan);
 
-				if (x.isValidator()) {
+				if (!x.getError().equals(null)) {
 					out.writeObject(x);
 
 					System.out.println(in.readObject().toString());
@@ -36,7 +36,7 @@ public class ClientManual {
 					out.writeObject("fim");
 
 				} else {
-					System.out.println("\n\nOPERAÇÃO INVALIDA!!!!");
+					System.out.println(x.getError());
 				}
 
 				disconectar();
@@ -77,7 +77,7 @@ public class ClientManual {
 
 		}
 
-		return new Operacao(operador, valor1, valor2, validator(operador));
+		return new Operacao(operador, valor1, valor2);
 	}
 
 	public static boolean validator(String op) {
