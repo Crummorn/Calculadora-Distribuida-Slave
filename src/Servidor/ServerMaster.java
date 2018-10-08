@@ -5,14 +5,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import Modelo.Operacao;
 
 public class ServerMaster extends Thread {
 	private static ServerSocket ss;
-	private Socket s;
-	private Socket slave;
+	
 	private final static int PORT = 10000;
+		
+	private static Socket s;
+	private static Socket slave;
+		
+	private static ObjectInputStream inSlave;
+	private static ObjectOutputStream outSlave;
 
 	public ServerMaster(Socket s) {
 		this.s = s;
@@ -20,8 +26,8 @@ public class ServerMaster extends Thread {
 
 	public void run() {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 
 			Object x = null;
 
@@ -30,18 +36,13 @@ public class ServerMaster extends Thread {
 
 				if (x instanceof Operacao) {
 					
-					slave = new Socket("localhost", acharServidor((Operacao) x));
-
-					ObjectOutputStream outSlave = new ObjectOutputStream(slave.getOutputStream());
-					ObjectInputStream inSlave = new ObjectInputStream(slave.getInputStream());
-
+					conectarSlave (acharServidor((Operacao) x));
+					
 					outSlave.writeObject(x);
 
 					out.writeObject(inSlave.readObject());
 
-					slave.close();
-					outSlave.close();
-					inSlave.close();
+					desconectarSlave();
 				}
 				
 			} while (!(x instanceof String) && x != "fim");
@@ -62,7 +63,33 @@ public class ServerMaster extends Thread {
 
 		}
 	}
+	
+	/*
+	 * Conecta o socket na porta do servidor master e cria o input/output
+	 */
+	public static void conectarSlave(int porta) throws UnknownHostException, IOException {
+		System.out.println("\nIniciando conexão com o servidor slave. PORTA: " + porta);
 
+		slave = new Socket("localhost", porta);
+
+		inSlave = new ObjectInputStream(slave.getInputStream());
+		outSlave = new ObjectOutputStream(slave.getOutputStream());
+	}
+
+	/*
+	 * Desconecta socket, input e output
+	 */
+	private static void desconectarSlave() throws IOException {
+		if (inSlave != null)
+			inSlave.close();
+
+		if (outSlave != null)
+			outSlave.close();
+
+		if (slave != null && slave.isConnected())
+			slave.close();
+	}
+	
 	/*
 	 * Baseado na operação, seleciona a porta do servidor
 	 */
