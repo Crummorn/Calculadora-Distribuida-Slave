@@ -70,7 +70,7 @@ public class ClientManual {
 			try {
 
 				// Testa se a operação é uma potenciação para ler somente 1 numero
-				if (operador.equals("pot") || operador.equals("#")) {
+				if (operador.equals("sqr") || operador.equals("$")) {
 					System.out.println("Informe o valor: ");
 					valor1 = Double.parseDouble(scan.next());
 

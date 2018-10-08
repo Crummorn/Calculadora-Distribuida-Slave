@@ -26,8 +26,8 @@ public class ServerMaster extends Thread {
 
 	public void run() {
 		try {
-			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 
 			Object x = null;
 
