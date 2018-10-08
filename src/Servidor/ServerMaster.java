@@ -14,7 +14,7 @@ public class ServerMaster extends Thread {
 	
 	private final static int PORT = 10000;
 		
-	private static Socket s;
+	private Socket s;
 	private static Socket slave;
 		
 	private static ObjectInputStream inSlave;
@@ -64,8 +64,37 @@ public class ServerMaster extends Thread {
 		}
 	}
 	
+	public static void main(String[] args) {
+		try {
+			ss = new ServerSocket(PORT);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		System.out.println("Server Master rodando na porta = " + ss.getLocalPort());
+
+		while (true) {
+			try {
+				Socket conexao = ss.accept();
+
+				System.out.println("\n======================================");
+				System.out.println("\nCliente Aceito");
+				System.out.println("HOSTNAME = " + conexao.getInetAddress().getHostName());
+				System.out.println("HOST ADDRESS = " + conexao.getInetAddress().getHostAddress());
+				System.out.println("PORTA LOCAL = " + conexao.getLocalPort());
+				System.out.println("PORTA DE CONEXAO = " + conexao.getPort());
+
+				new ServerMaster(conexao).start();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	/*
-	 * Conecta o socket na porta do servidor master e cria o input/output
+	 * Conecta o socket na porta do servidor slave e cria o input/output
 	 */
 	public static void conectarSlave(int porta) throws UnknownHostException, IOException {
 		System.out.println("\nIniciando conexão com o servidor slave. PORTA: " + porta);
@@ -123,33 +152,5 @@ public class ServerMaster extends Thread {
 		return porta;
 	}
 
-	public static void main(String[] args) {
-		try {
-			ss = new ServerSocket(PORT);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		System.out.println("Server Socket rodando na porta = " + ss.getLocalPort());
-
-		while (true) {
-			try {
-				Socket conexao = ss.accept();
-
-				System.out.println("\n======================================");
-				System.out.println("\nCliente Aceito");
-				System.out.println("HOSTNAME = " + conexao.getInetAddress().getHostName());
-				System.out.println("HOST ADDRESS = " + conexao.getInetAddress().getHostAddress());
-				System.out.println("PORTA LOCAL = " + conexao.getLocalPort());
-				System.out.println("PORTA DE CONEXAO = " + conexao.getPort());
-
-				new ServerMaster(conexao).start();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
 
 }
