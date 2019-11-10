@@ -1,4 +1,4 @@
-package Servidor;
+package servidor;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,55 +6,50 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import Modelo.Operacao;
+import modelo.Operacao;
 
-public class ServerSlaveOpCom extends Thread {
-	private static ServerSocket ss;
+public class ServidorSlaveOpBas extends Thread {
+	private Socket socket;
+	private static ServerSocket serverSocket;
+	private final static int PORT = 10010;
 
-	private Socket s;
-
-	private final static int PORT = 10020;
-
-	public ServerSlaveOpCom(Socket s) {
-		this.s = s;
+	public ServidorSlaveOpBas(Socket s) {
+		this.socket = s;
 	}
 
 	public void run() {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+			ObjectOutputStream outMaster = new ObjectOutputStream(socket.getOutputStream());
+			ObjectInputStream inMaster = new ObjectInputStream(socket.getInputStream());
 
-			Object x = null;
+			Operacao x = null;
 
-			x = in.readObject();
+			x = (Operacao) inMaster.readObject();
 
-			x = funcoes((Operacao) x);
+			x = funcoes(x);
 
-			out.writeObject(x);
+			outMaster.writeObject(x);
 
 			System.out.println(x.toString());
-
 		} catch (IOException e) {
 			e.printStackTrace();
-
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-
 		}
 	}
 
 	public static void main(String[] args) {
 		try {
-			ss = new ServerSocket(PORT);
+			serverSocket = new ServerSocket(PORT);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
-		System.out.println("Server Slave de operações basicas rodando na porta = " + ss.getLocalPort());
+		System.out.println("Server Slave de operações basicas rodando na porta = " + serverSocket.getLocalPort());
 
 		while (true) {
 			try {
-				Socket conexao = ss.accept();
+				Socket conexao = serverSocket.accept();
 
 				System.out.println("\n======================================");
 				System.out.println("\nHOSTNAME = " + conexao.getInetAddress().getHostName());
@@ -62,13 +57,13 @@ public class ServerSlaveOpCom extends Thread {
 				System.out.println("PORTA LOCAL = " + conexao.getLocalPort());
 				System.out.println("PORTA DE CONEXAO = " + conexao.getPort());
 
-				new ServerSlaveOpCom(conexao).start();
+				new ServidorSlaveOpBas(conexao).start();
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
+
 	}
 
 	/*
@@ -76,17 +71,21 @@ public class ServerSlaveOpCom extends Thread {
 	 */
 	public Operacao funcoes(Operacao x) {
 		switch (x.getOperacao().toLowerCase()) {
-		case "#":
-		case "pot":
-			x.setResultado(Math.pow(x.getValor1(), x.getValor2()));
+		case "+":
+		case "som":
+			x.setResultado(x.getValor1() + x.getValor2());
 			break;
-		case "%":
-		case "por":
-			x.setResultado((x.getValor1() * x.getValor2()) / 100);
+		case "-":
+		case "sub":
+			x.setResultado(x.getValor1() - x.getValor2());
 			break;
-		case "$":
-		case "sqr":
-			x.setResultado(Math.sqrt(x.getValor1()));
+		case "/":
+		case "div":
+			x.setResultado(x.getValor1() / x.getValor2());
+			break;
+		case "*":
+		case "mul":
+			x.setResultado(x.getValor1() * x.getValor2());
 			break;
 		default:
 			x.setResultado(99999999);

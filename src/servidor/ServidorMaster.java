@@ -1,4 +1,4 @@
-package Servidor;
+package servidor;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,63 +7,47 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import Modelo.Operacao;
+import modelo.Operacao;
 
-public class ServerMaster extends Thread {
+public class ServidorMaster extends Thread {
 	private static ServerSocket ss;
-	
+
 	private final static int PORT = 10000;
-		
-	private Socket s;
+
+	private Socket socket;
 	private static Socket slave;
-		
+
 	private static ObjectInputStream inSlave;
 	private static ObjectOutputStream outSlave;
 
-	public ServerMaster(Socket s) {
-		this.s = s;
+	public ServidorMaster(Socket s) {
+		this.socket = s;
 	}
 
 	public void run() {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+			ObjectOutputStream outCliente = new ObjectOutputStream(socket.getOutputStream());
+			ObjectInputStream inCliente = new ObjectInputStream(socket.getInputStream());
 
-			Object x = null;
+			Operacao operacao = (Operacao) inCliente.readObject(); // Recebe Operação do Client
 
-			do {
-				x = in.readObject();
+			conectarSlave(acharServidor(operacao)); // Decide a porta do server slave // Estabelece conexão ao
+													// server slave, alem do in/out
 
-				if (x instanceof Operacao) {
-					
-					conectarSlave (acharServidor((Operacao) x));
-					
-					outSlave.writeObject(x);
+			outSlave.writeObject(operacao); // Manda a operação para o slave processar
 
-					out.writeObject(inSlave.readObject());
+			outCliente.writeObject(inSlave.readObject()); // Recebe a resposta do slave e escreve no Client
 
-					desconectarSlave();
-				}
-				
-			} while (!(x instanceof String) && x != "fim");
+			desconectarSlave(); // Desfaz conexão com slave, alem de acabar com in/out
 
-			if (x instanceof String && x == "fim") {
-				System.out.println(x);
-
-				s.close();
-				out.close();
-				in.close();
-			}
-
-		} catch (IOException e) {
+			outCliente.close();
+			inCliente.close();
+			socket.close();
+		} catch (Exception e) {
 			e.printStackTrace();
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			ss = new ServerSocket(PORT);
@@ -84,15 +68,13 @@ public class ServerMaster extends Thread {
 				System.out.println("PORTA LOCAL = " + conexao.getLocalPort());
 				System.out.println("PORTA DE CONEXAO = " + conexao.getPort());
 
-				new ServerMaster(conexao).start();
-
+				new ServidorMaster(conexao).start();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
-	
+
 	/*
 	 * Conecta o socket na porta do servidor slave e cria o input/output
 	 */
@@ -118,13 +100,13 @@ public class ServerMaster extends Thread {
 		if (slave != null && slave.isConnected())
 			slave.close();
 	}
-	
+
 	/*
 	 * Baseado na operação, seleciona a porta do servidor
 	 */
-	public int acharServidor (Operacao x) {
+	public int acharServidor(Operacao x) {
 		int porta;
-		
+
 		switch (x.getOperacao()) {
 		case "+":
 		case "som":
@@ -148,9 +130,8 @@ public class ServerMaster extends Thread {
 			porta = -1;
 			break;
 		}
-				
+
 		return porta;
 	}
-
 
 }

@@ -1,38 +1,21 @@
-package Modelo;
+package modelo;
 
 import java.io.Serializable;
 
 public class Operacao implements Serializable {
 
 	private static final long serialVersionUID = 940075609663291305L;
+	
 	private String operacao;
 	private double valor1;
 	private double valor2;
 	private double resultado;
-	private String error;
+	private String error = "";
 
 	public Operacao() {
-		super();
+		
 	}
-
-	public Operacao(String operacao, double valor1, double valor2, String error) {
-		super();
-		this.operacao = operacao;
-		this.valor1 = valor1;
-		this.valor2 = valor2;
-		this.resultado = 0;
-		this.error = error;
-	}
-
-	public Operacao(String operacao, double valor1, String error) {
-		super();
-		this.operacao = operacao;
-		this.valor1 = valor1;
-		this.valor2 = 0;
-		this.resultado = 0;
-		this.error = error;
-	}
-
+	
 	public String getOperacao() {
 		return operacao;
 	}
